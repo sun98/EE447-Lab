@@ -15,20 +15,21 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class PaintView extends View  {
+public class PaintView extends View {
 
     private Canvas canvas;
-    private Path    mpath;
-    private Paint   mBitmapPaint;
+    private Path mpath;
+    private Paint mBitmapPaint;
     private Bitmap bitmap;
     private Paint mpaint;
 
-    class Draw{
+    class Draw {
         Path path;
         Paint paint;
     }
-    private ArrayList<Draw> undopaths;
-    private ArrayList<Draw> redopaths;
+
+    private ArrayList<Draw> undoPaths;
+    private ArrayList<Draw> redoPaths;
     private Draw currentDraw;
 
     private float mX, mY;
@@ -37,7 +38,7 @@ public class PaintView extends View  {
     private int width;
     private int height;
 
-    public void initCanvas(){
+    public void initCanvas() {
         mpaint = new Paint();
         mpaint.setAntiAlias(true);
         mpaint.setDither(true);
@@ -49,34 +50,35 @@ public class PaintView extends View  {
         mpath = new Path();
         mBitmapPaint = new Paint(Paint.DITHER_FLAG);
     }
+
     public PaintView(Context c) {
         super(c);
-        undopaths = new ArrayList<Draw>();
-        redopaths = new ArrayList<Draw>();
+        undoPaths = new ArrayList<>();
+        redoPaths = new ArrayList<>();
         initCanvas();
     }
+
     public PaintView(Context c, AttributeSet attrs) {
-        super(c,attrs);
-        undopaths = new ArrayList<Draw>();
-        redopaths = new ArrayList<Draw>();
+        super(c, attrs);
+        undoPaths = new ArrayList<>();
+        redoPaths = new ArrayList<>();
         initCanvas();
     }
+
     public PaintView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        undopaths = new ArrayList<Draw>();
-        redopaths = new ArrayList<Draw>();
+        undoPaths = new ArrayList<>();
+        redoPaths = new ArrayList<>();
         initCanvas();
     }
 
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec){
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         width = MeasureSpec.getSize(widthMeasureSpec);
         height = MeasureSpec.getSize(heightMeasureSpec);
-        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
 
-        setMeasuredDimension(width,height);
+        setMeasuredDimension(width, height);
         bitmap = Bitmap.createBitmap(width, height,
                 Bitmap.Config.RGB_565);
         canvas = new Canvas(bitmap);  //所有mCanvas画的东西都被保存在了mBitmap中
@@ -86,7 +88,6 @@ public class PaintView extends View  {
 
     @Override
     protected void onDraw(Canvas canvas) {
-
         canvas.drawBitmap(bitmap, 0, 0, mBitmapPaint);     //显示旧的画布
         if (mpath != null) {
             // 实时的显示
@@ -115,7 +116,7 @@ public class PaintView extends View  {
                 invalidate(); //清屏
                 break;
             case MotionEvent.ACTION_MOVE:
-                mpath.quadTo(mX, mY, (x + mX)/2, (y + mY)/2);
+                mpath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
                 mX = x;
                 mY = y;
 
@@ -124,7 +125,7 @@ public class PaintView extends View  {
             case MotionEvent.ACTION_UP:
                 mpath.lineTo(mX, mY);
                 canvas.drawPath(mpath, mpaint);
-                undopaths.add(currentDraw);
+                undoPaths.add(currentDraw);
                 mpath = null;
 
                 invalidate();
@@ -134,30 +135,30 @@ public class PaintView extends View  {
     }
 
     //设置画笔颜色
-    public void setPaintColor(int Color){
+    public void setPaintColor(int Color) {
         mpaint.setColor(Color);
     }
 
     //设置画笔线的类型
-    public void setPaintStrokeCap(Paint.Cap a){
+    public void setPaintStrokeCap(Paint.Cap a) {
         mpaint.setStrokeCap(a);
     }
 
     //设置线的宽度
-    public void setPaintStrokeWidth(float width){
+    public void setPaintStrokeWidth(float width) {
         mpaint.setStrokeWidth(width);
     }
 
     //设置抗锯齿
-    public void setPaintAntiAlias(boolean flag){
+    public void setPaintAntiAlias(boolean flag) {
         mpaint.setAntiAlias(flag);
     }
 
     //设置画板背景颜色
-    public void setBitmapBackgroundColor(int Color){
-        Bitmap tmp=Bitmap.createBitmap(bitmap.getWidth(),bitmap.getHeight(),bitmap.getConfig());
+    public void setBitmapBackgroundColor(int Color) {
+        Bitmap tmp = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
         canvas = new Canvas(bitmap);
-        Paint paint=new Paint();
+        Paint paint = new Paint();
         paint.setColor(Color);
         canvas.drawRect(0, 0, bitmap.getWidth(), bitmap.getHeight(), paint);
         canvas.drawBitmap(bitmap, 0, 0, paint);
@@ -165,26 +166,26 @@ public class PaintView extends View  {
     }
 
     //保存bitmap图片
-    public Bitmap saveBitmap(){
+    public Bitmap saveBitmap() {
         return bitmap;
     }
 
-    public void clearbitmap(){
+    public void clearbitmap() {
         canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         invalidate();
-        undopaths.clear();
-        redopaths.clear();
+        undoPaths.clear();
+        redoPaths.clear();
     }
 
-    public void undo(){
-        if(undopaths != null && undopaths.size() > 0){
+    public void undo() {
+        if (undoPaths != null && undoPaths.size() > 0) {
             clearbitmap();
 
-            Draw drawPath = undopaths.get(undopaths.size() - 1);
-            redopaths.add(drawPath);
-            undopaths.remove(undopaths.size() - 1);
+            Draw drawPath = undoPaths.get(undoPaths.size() - 1);
+            redoPaths.add(drawPath);
+            undoPaths.remove(undoPaths.size() - 1);
 
-            Iterator<Draw> iterator = undopaths.iterator();
+            Iterator<Draw> iterator = undoPaths.iterator();
             while (iterator.hasNext()) {
                 Draw draw = iterator.next();
                 canvas.drawPath(draw.path, draw.paint);
@@ -193,12 +194,12 @@ public class PaintView extends View  {
         }
     }
 
-    public void redo(){
-        if(redopaths.size() > 0){
-            Draw draw = redopaths.get(redopaths.size() - 1);
-            undopaths.add(draw);
+    public void redo() {
+        if (redoPaths.size() > 0) {
+            Draw draw = redoPaths.get(redoPaths.size() - 1);
+            undoPaths.add(draw);
             canvas.drawPath(draw.path, draw.paint);
-            redopaths.remove(redopaths.size() - 1);
+            redoPaths.remove(redoPaths.size() - 1);
             invalidate();
         }
     }
