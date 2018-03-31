@@ -1,18 +1,14 @@
 package cn.nibius.drawline.activity;
 
-import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.widget.Button;
-import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
@@ -30,8 +26,8 @@ public class MainActivity extends AppCompatActivity {
     Button btnColor;
     @BindView(R.id.btn_line)
     ImageButton btnLine;
-    @BindView(R.id.btn_yellow)
-    Button btnYellow;
+    @BindView(R.id.btn_shape)
+    ImageButton btnShape;
 
     private String TAG = "draw";
     private Context context;
@@ -59,10 +55,12 @@ public class MainActivity extends AppCompatActivity {
                 .setContentView(R.layout.pop_color)
                 .setFocusAndOutsideEnable(true)
                 .createPopup();
-        int[] buttons = {R.id.btn_color_b, R.id.btn_color_r, R.id.btn_color_y, R.id.btn_color_bu, R.id.btn_color_g};
+        int[] buttons = {R.id.btn_color_b, R.id.btn_color_r,
+                R.id.btn_color_y, R.id.btn_color_bu, R.id.btn_color_g};
         int[] definedColors = {Color.BLACK, Color.RED, Color.YELLOW, Color.BLUE, Color.GREEN};
         for (int i = 0; i < 5; i++) {
-            popColor.getView(buttons[i]).setOnClickListener(new ColorClickListener(definedColors[i], popColor, btnColor));
+            popColor.getView(buttons[i])
+                    .setOnClickListener(new ColorClickListener(definedColors[i], popColor, btnColor));
         }
         popLineWidth = new EasyPopup(this)
                 .setContentView(R.layout.pop_line_width)
@@ -98,5 +96,25 @@ public class MainActivity extends AppCompatActivity {
                 popLineWidth.showAsDropDown(view);
             }
         });
+
+        final View.OnClickListener[] shapeListeners = new View.OnClickListener[4];
+        final int[] shapeRes = {
+                R.drawable.brush,
+                R.drawable.ic_circle_outline_black_36dp,
+                R.drawable.ellipse_stroked,
+                R.drawable.crop_landscape
+        };
+        for (int i = 0; i < 4; i++) {
+            final int finalI = i;
+            shapeListeners[i] = new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    view.setOnClickListener(shapeListeners[(finalI + 1) % 4]);
+                    view.setBackgroundResource(shapeRes[(finalI + 1) % 4]);
+                    paintView.setPaintMode((finalI + 1) % 4);
+                }
+            };
+        }
+        btnShape.setOnClickListener(shapeListeners[0]);
     }
 }

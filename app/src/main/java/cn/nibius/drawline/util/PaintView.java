@@ -27,13 +27,13 @@ public class PaintView extends View {
         Paint paint;
     }
 
-    private ArrayList<Draw> undoPaths,redoPaths;
+    private ArrayList<Draw> undoPaths, redoPaths;
     private Draw currentDraw;
 
     private float mX, mY;
-    private int width,height;
+    private int width, height;
 
-    private boolean modelToPaintSpecialShape=false;
+    private boolean modelToPaintSpecialShape = false;
     private int model;
 
     private boolean isEraser = false;
@@ -63,14 +63,17 @@ public class PaintView extends View {
         eraserPaint.setStrokeCap(Paint.Cap.ROUND);
         eraserPaint.setStrokeWidth(20);
     }
+
     public PaintView(Context c) {
         super(c);
         initCanvas();
     }
+
     public PaintView(Context c, AttributeSet attrs) {
         super(c, attrs);
         initCanvas();
     }
+
     public PaintView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initCanvas();
@@ -95,35 +98,35 @@ public class PaintView extends View {
         if (mpath != null) {
             canvas.drawPath(mpath, mpaint);
         }
-        if (eraserPath != null){
-            canvas.drawPath(eraserPath,eraserPaint);
+        if (eraserPath != null) {
+            canvas.drawPath(eraserPath, eraserPaint);
         }
     }
 
-    private void drawMove(float x,float y){
+    private void drawMove(float x, float y) {
         mpath.reset();
-        switch (model){
+        switch (model) {
             case 1:
-                float radius = (float) Math.sqrt((x-mX)*(x-mX)+(y-mY)*(y-mY));
-                mpath.addCircle(mX,mY,radius,Path.Direction.CW);
+                float radius = (float) Math.sqrt((x - mX) * (x - mX) + (y - mY) * (y - mY));
+                mpath.addCircle(mX, mY, radius, Path.Direction.CW);
                 break;
             case 2:
-                mpath.addOval(x,y,mX,mY,Path.Direction.CW);
+                mpath.addOval(x, y, mX, mY, Path.Direction.CW);
                 break;
             case 3:
-                mpath.addRect(mX,mY,x,y,Path.Direction.CW);
+                mpath.addRect(mX, mY, x, y, Path.Direction.CW);
                 break;
             default:
                 break;
         }
     }
 
-    private void drawUp(float x,float y){
-        drawMove(x,y);
+    private void drawUp(float x, float y) {
+        drawMove(x, y);
         canvas.drawPath(mpath, mpaint);
         undoPaths.add(currentDraw);
         mpath = null;
-        modelToPaintSpecialShape = false;
+//        modelToPaintSpecialShape = false;
     }
 
     @Override
@@ -133,9 +136,9 @@ public class PaintView extends View {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (isEraser){
+                if (isEraser) {
                     eraserPath = new Path();
-                    eraserPath.moveTo(x,y);
+                    eraserPath.moveTo(x, y);
                     currentDraw = new Draw();
                     currentDraw.path = eraserPath;
                     currentDraw.paint = eraserPaint;
@@ -157,12 +160,12 @@ public class PaintView extends View {
                 invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (modelToPaintSpecialShape){
-                    drawMove(x,y);
+                if (modelToPaintSpecialShape) {
+                    drawMove(x, y);
                     invalidate();
                     break;
                 }
-                if (isEraser){
+                if (isEraser) {
                     eraserPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
                     mX = x;
                     mY = y;
@@ -176,12 +179,12 @@ public class PaintView extends View {
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
-                if (modelToPaintSpecialShape){
-                    drawUp(x,y);
+                if (modelToPaintSpecialShape) {
+                    drawUp(x, y);
                     invalidate();
                     break;
                 }
-                if (isEraser){
+                if (isEraser) {
                     eraserPath.lineTo(mX, mY);
                     canvas.drawPath(eraserPath, eraserPaint);
                     undoPaths.add(currentDraw);
@@ -236,7 +239,7 @@ public class PaintView extends View {
         return bitmap;
     }
 
-    public void clearbitmap() {
+    public void clearBitmap() {
         setBitmapBackgroundColor(Color.WHITE);
         undoPaths.clear();
         redoPaths.clear();
@@ -269,23 +272,16 @@ public class PaintView extends View {
         }
     }
 
-    public void paintCircleByRadius(){
-        modelToPaintSpecialShape = true;
-        model=1;//1. 圆 2. 正方形 3. 矩形
+    public void setPaintMode(int m) {
+        if (m == 0) modelToPaintSpecialShape = false;
+        else {
+            modelToPaintSpecialShape = true;
+            model = m;
+        }
     }
 
-    public void paintSquare(){
-        modelToPaintSpecialShape = true;
-        model=2;//1. 圆 2. 正方形 3. 矩形
-    }
-
-    public void paintRectangle(){
-        modelToPaintSpecialShape = true;
-        model=3;//1. 圆 2. 正方形 3. 矩形
-    }
-
-    public void setEraserOn(){
-        if (isEraser) isEraser=false;
+    public void setEraserOn() {
+        if (isEraser) isEraser = false;
         else isEraser = true;
     }
 
