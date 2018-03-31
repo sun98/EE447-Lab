@@ -111,10 +111,16 @@ public class PaintView extends View {
                 mpath.addCircle(mX, mY, radius, Path.Direction.CW);
                 break;
             case 2:
-                mpath.addOval(x, y, mX, mY, Path.Direction.CW);
+                if (x>=mX && y>=mY) mpath.addOval(x, y, mX, mY, Path.Direction.CW);
+                else if (x>=mX && y<mY) mpath.addOval(x, y, mX, mY, Path.Direction.CCW);
+                else if (x<mX && y>=mY) mpath.addOval(mX,mY,x,y, Path.Direction.CCW);
+                else mpath.addOval(mX,mY,x,y, Path.Direction.CW);
                 break;
             case 3:
-                mpath.addRect(mX, mY, x, y, Path.Direction.CW);
+                if (x>=mX && y>=mY) mpath.addRect(x, y, mX, mY, Path.Direction.CW);
+                else if (x>=mX && y<mY) mpath.addRect(x, y, mX, mY, Path.Direction.CCW);
+                else if (x<mX && y>=mY) mpath.addRect(mX,mY,x,y, Path.Direction.CCW);
+                else mpath.addRect(mX,mY,x,y, Path.Direction.CW);
                 break;
             default:
                 break;
