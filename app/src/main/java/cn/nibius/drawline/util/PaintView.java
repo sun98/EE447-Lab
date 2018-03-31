@@ -111,16 +111,13 @@ public class PaintView extends View {
                 mpath.addCircle(mX, mY, radius, Path.Direction.CW);
                 break;
             case 2:
-                if (x>=mX && y>=mY) mpath.addOval(x, y, mX, mY, Path.Direction.CW);
-                else if (x>=mX && y<mY) mpath.addOval(x, y, mX, mY, Path.Direction.CCW);
-                else if (x<mX && y>=mY) mpath.addOval(mX,mY,x,y, Path.Direction.CCW);
-                else mpath.addOval(mX,mY,x,y, Path.Direction.CW);
+                mpath.addOval(mX,mY,x,y, Path.Direction.CW);
                 break;
             case 3:
-                if (x>=mX && y>=mY) mpath.addRect(x, y, mX, mY, Path.Direction.CW);
-                else if (x>=mX && y<mY) mpath.addRect(x, y, mX, mY, Path.Direction.CCW);
-                else if (x<mX && y>=mY) mpath.addRect(mX,mY,x,y, Path.Direction.CCW);
-                else mpath.addRect(mX,mY,x,y, Path.Direction.CW);
+                if (x>=mX && y>=mY) mpath.addRect(mX,mY,x,y, Path.Direction.CW);
+                else if (x>=mX && y<mY) mpath.addRect(mX,y,x,mY, Path.Direction.CW);
+                else if (x<mX && y>=mY) mpath.addRect(x,mY,mX,y, Path.Direction.CW);
+                else mpath.addRect(x,y,mX,mY, Path.Direction.CW);
                 break;
             default:
                 break;
