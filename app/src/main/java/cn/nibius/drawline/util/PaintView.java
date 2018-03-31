@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PorterDuff;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -28,47 +27,52 @@ public class PaintView extends View {
         Paint paint;
     }
 
-    private ArrayList<Draw> undoPaths;
-    private ArrayList<Draw> redoPaths;
+    private ArrayList<Draw> undoPaths,redoPaths;
     private Draw currentDraw;
 
     private float mX, mY;
-    private static final float TOUCH_TOLERANCE = 4;
+    private int width,height;
 
-    private int width;
-    private int height;
+    private boolean modelToPaintSpecialShape=false;
+    private int model;
+
+    private boolean isEraser = false;
+    int backgroundColor = Color.WHITE;
+    private Paint eraserPaint;
+    private Path eraserPath;
 
     public void initCanvas() {
+        undoPaths = new ArrayList<>();
+        redoPaths = new ArrayList<>();
         mpaint = new Paint();
         mpaint.setAntiAlias(true);
         mpaint.setDither(true);
-        mpaint.setColor(0xFF00FF00);
+        mpaint.setColor(Color.BLACK);
         mpaint.setStyle(Paint.Style.STROKE);
         mpaint.setStrokeJoin(Paint.Join.ROUND);
         mpaint.setStrokeCap(Paint.Cap.ROUND);
         mpaint.setStrokeWidth(10);
         mpath = new Path();
-        mBitmapPaint = new Paint(Paint.DITHER_FLAG);
-    }
 
+        mBitmapPaint = new Paint(Paint.DITHER_FLAG);
+
+        eraserPaint = new Paint(Paint.DITHER_FLAG);
+        eraserPaint.setColor(backgroundColor);
+        eraserPaint.setStyle(Paint.Style.STROKE);
+        eraserPaint.setStrokeJoin(Paint.Join.ROUND);
+        eraserPaint.setStrokeCap(Paint.Cap.ROUND);
+        eraserPaint.setStrokeWidth(20);
+    }
     public PaintView(Context c) {
         super(c);
-        undoPaths = new ArrayList<>();
-        redoPaths = new ArrayList<>();
         initCanvas();
     }
-
     public PaintView(Context c, AttributeSet attrs) {
         super(c, attrs);
-        undoPaths = new ArrayList<>();
-        redoPaths = new ArrayList<>();
         initCanvas();
     }
-
     public PaintView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        undoPaths = new ArrayList<>();
-        redoPaths = new ArrayList<>();
         initCanvas();
     }
 
@@ -79,20 +83,47 @@ public class PaintView extends View {
         height = MeasureSpec.getSize(heightMeasureSpec);
 
         setMeasuredDimension(width, height);
-        bitmap = Bitmap.createBitmap(width, height,
-                Bitmap.Config.RGB_565);
-        canvas = new Canvas(bitmap);  //所有mCanvas画的东西都被保存在了mBitmap中
+        bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+        canvas = new Canvas(bitmap);
 
         canvas.drawColor(Color.WHITE);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.drawBitmap(bitmap, 0, 0, mBitmapPaint);     //显示旧的画布
+        canvas.drawBitmap(bitmap, 0, 0, mBitmapPaint);
         if (mpath != null) {
-            // 实时的显示
             canvas.drawPath(mpath, mpaint);
         }
+        if (eraserPath != null){
+            canvas.drawPath(eraserPath,eraserPaint);
+        }
+    }
+
+    private void drawMove(float x,float y){
+        mpath.reset();
+        switch (model){
+            case 1:
+                float radius = (float) Math.sqrt((x-mX)*(x-mX)+(y-mY)*(y-mY));
+                mpath.addCircle(mX,mY,radius,Path.Direction.CW);
+                break;
+            case 2:
+                mpath.addOval(x,y,mX,mY,Path.Direction.CW);
+                break;
+            case 3:
+                mpath.addRect(mX,mY,x,y,Path.Direction.CW);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void drawUp(float x,float y){
+        drawMove(x,y);
+        canvas.drawPath(mpath, mpaint);
+        undoPaths.add(currentDraw);
+        mpath = null;
+        modelToPaintSpecialShape = false;
     }
 
     @Override
@@ -102,20 +133,42 @@ public class PaintView extends View {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-
+                if (isEraser){
+                    eraserPath = new Path();
+                    eraserPath.moveTo(x,y);
+                    currentDraw = new Draw();
+                    currentDraw.path = eraserPath;
+                    currentDraw.paint = eraserPaint;
+                    mX = x;
+                    mY = y;
+                    invalidate();
+                    break;
+                }
                 mpath = new Path();
                 currentDraw = new Draw();
                 currentDraw.path = mpath;
                 currentDraw.paint = mpaint;
 
-                mpath.reset();//清空path
+                mpath.reset();
                 mpath.moveTo(x, y);
                 mX = x;
                 mY = y;
 
-                invalidate(); //清屏
+                invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
+                if (modelToPaintSpecialShape){
+                    drawMove(x,y);
+                    invalidate();
+                    break;
+                }
+                if (isEraser){
+                    eraserPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
+                    mX = x;
+                    mY = y;
+                    invalidate();
+                    break;
+                }
                 mpath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
                 mX = x;
                 mY = y;
@@ -123,6 +176,19 @@ public class PaintView extends View {
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
+                if (modelToPaintSpecialShape){
+                    drawUp(x,y);
+                    invalidate();
+                    break;
+                }
+                if (isEraser){
+                    eraserPath.lineTo(mX, mY);
+                    canvas.drawPath(eraserPath, eraserPaint);
+                    undoPaths.add(currentDraw);
+                    eraserPath = null;
+                    invalidate();
+                    break;
+                }
                 mpath.lineTo(mX, mY);
                 canvas.drawPath(mpath, mpaint);
                 undoPaths.add(currentDraw);
@@ -155,14 +221,14 @@ public class PaintView extends View {
     }
 
     //设置画板背景颜色
-    public void setBitmapBackgroundColor(int Color) {
-        Bitmap tmp = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
-        canvas = new Canvas(bitmap);
+    public void setBitmapBackgroundColor(int color) {
+        backgroundColor = color;
+        eraserPaint.setColor(backgroundColor);
+
         Paint paint = new Paint();
-        paint.setColor(Color);
+        paint.setColor(color);
         canvas.drawRect(0, 0, bitmap.getWidth(), bitmap.getHeight(), paint);
-        canvas.drawBitmap(bitmap, 0, 0, paint);
-        bitmap = tmp;
+        invalidate();
     }
 
     //保存bitmap图片
@@ -171,15 +237,14 @@ public class PaintView extends View {
     }
 
     public void clearbitmap() {
-        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-        invalidate();
+        setBitmapBackgroundColor(Color.WHITE);
         undoPaths.clear();
         redoPaths.clear();
     }
 
     public void undo() {
         if (undoPaths != null && undoPaths.size() > 0) {
-            clearbitmap();
+            setBitmapBackgroundColor(Color.WHITE);
 
             Draw drawPath = undoPaths.get(undoPaths.size() - 1);
             redoPaths.add(drawPath);
@@ -203,5 +268,26 @@ public class PaintView extends View {
             invalidate();
         }
     }
+
+    public void paintCircleByRadius(){
+        modelToPaintSpecialShape = true;
+        model=1;//1. 圆 2. 正方形 3. 矩形
+    }
+
+    public void paintSquare(){
+        modelToPaintSpecialShape = true;
+        model=2;//1. 圆 2. 正方形 3. 矩形
+    }
+
+    public void paintRectangle(){
+        modelToPaintSpecialShape = true;
+        model=3;//1. 圆 2. 正方形 3. 矩形
+    }
+
+    public void setEraserOn(){
+        if (isEraser) isEraser=false;
+        else isEraser = true;
+    }
+
 
 }
