@@ -1,66 +1,71 @@
 package cn.nibius.drawline.util;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
-import android.util.Pair;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 
+public class PaintView extends View  {
 
-public class PaintView extends View {
     private Canvas canvas;
-    private Paint mpaint;
-    private Path mpath;
+    private Path    mpath;
+    private Paint   mBitmapPaint;
     private Bitmap bitmap;
-    private int width,height;
-    float x, y;
+    private Paint mpaint;
 
-    private ArrayList<Pair<Path, Paint>> paths = new ArrayList<>();
-    private ArrayList<Pair<Path, Paint>> undonePaths = new ArrayList<>();
-
-    public PaintView(Context context) {
-        super(context);
-
-        mpaint = new Paint(Paint.DITHER_FLAG);
-        mpaint.setAntiAlias(true);                //设置抗锯齿，一般设为true
-        mpaint.setColor(Color.RED);              //设置线的颜色
-        mpaint.setStrokeCap(Paint.Cap.ROUND);     //设置线的类型
-        mpaint.setStrokeWidth(8);                //设置线的宽度
+    class Draw{
+        Path path;
+        Paint paint;
     }
+    private ArrayList<Draw> undopaths;
+    private ArrayList<Draw> redopaths;
+    private Draw currentDraw;
 
-    public PaintView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        mpaint = new Paint(Paint.DITHER_FLAG);
-        mpaint.setAntiAlias(true);                //设置抗锯齿，一般设为true
-        mpaint.setColor(Color.RED);              //设置线的颜色
-        mpaint.setStrokeCap(Paint.Cap.ROUND);     //设置线的类型
-        mpaint.setStrokeWidth(8);                //设置线的宽度
+    private float mX, mY;
+    private static final float TOUCH_TOLERANCE = 4;
+
+    private int width;
+    private int height;
+
+    public void initCanvas(){
+        mpaint = new Paint();
+        mpaint.setAntiAlias(true);
+        mpaint.setDither(true);
+        mpaint.setColor(0xFF00FF00);
+        mpaint.setStyle(Paint.Style.STROKE);
+        mpaint.setStrokeJoin(Paint.Join.ROUND);
+        mpaint.setStrokeCap(Paint.Cap.ROUND);
+        mpaint.setStrokeWidth(10);
+        mpath = new Path();
+        mBitmapPaint = new Paint(Paint.DITHER_FLAG);
     }
-
+    public PaintView(Context c) {
+        super(c);
+        undopaths = new ArrayList<Draw>();
+        redopaths = new ArrayList<Draw>();
+        initCanvas();
+    }
+    public PaintView(Context c, AttributeSet attrs) {
+        super(c,attrs);
+        undopaths = new ArrayList<Draw>();
+        redopaths = new ArrayList<Draw>();
+        initCanvas();
+    }
     public PaintView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mpaint = new Paint(Paint.DITHER_FLAG);
-        mpaint.setAntiAlias(true);                //设置抗锯齿，一般设为true
-        mpaint.setColor(Color.RED);              //设置线的颜色
-        mpaint.setStrokeCap(Paint.Cap.ROUND);     //设置线的类型
-        mpaint.setStrokeWidth(8);                //设置线的宽度
+        undopaths = new ArrayList<Draw>();
+        redopaths = new ArrayList<Draw>();
+        initCanvas();
     }
 
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec){
@@ -71,33 +76,60 @@ public class PaintView extends View {
         height = MeasureSpec.getSize(heightMeasureSpec);
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
 
-
         setMeasuredDimension(width,height);
-        bitmap = Bitmap.createBitmap(width,height, Bitmap.Config.ARGB_8888);
-        canvas = new Canvas();
-        canvas.setBitmap(bitmap);
+        bitmap = Bitmap.createBitmap(width, height,
+                Bitmap.Config.RGB_565);
+        canvas = new Canvas(bitmap);  //所有mCanvas画的东西都被保存在了mBitmap中
+
+        canvas.drawColor(Color.WHITE);
     }
 
-    //触摸事件
+    @Override
+    protected void onDraw(Canvas canvas) {
+
+        canvas.drawBitmap(bitmap, 0, 0, mBitmapPaint);     //显示旧的画布
+        if (mpath != null) {
+            // 实时的显示
+            canvas.drawPath(mpath, mpaint);
+        }
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        float x = event.getX();
+        float y = event.getY();
 
-        if (event.getAction() == MotionEvent.ACTION_MOVE) {    //拖动屏幕
-            canvas.drawLine(x, y, event.getX(), event.getY(), mpaint);   //画线，x，y是上次的坐标，event.getX(), event.getY()是当前坐标
-            invalidate();
-        }
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
 
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {    //按下屏幕
-            x = event.getX();
-            y = event.getY();
-            canvas.drawPoint(x, y, mpaint);                //画点
-            invalidate();
-        }
-        if (event.getAction() == MotionEvent.ACTION_UP) {    //松开屏幕
+                mpath = new Path();
+                currentDraw = new Draw();
+                currentDraw.path = mpath;
+                currentDraw.paint = mpaint;
 
+                mpath.reset();//清空path
+                mpath.moveTo(x, y);
+                mX = x;
+                mY = y;
+
+                invalidate(); //清屏
+                break;
+            case MotionEvent.ACTION_MOVE:
+                mpath.quadTo(mX, mY, (x + mX)/2, (y + mY)/2);
+                mX = x;
+                mY = y;
+
+                invalidate();
+                break;
+            case MotionEvent.ACTION_UP:
+                mpath.lineTo(mX, mY);
+                canvas.drawPath(mpath, mpaint);
+                undopaths.add(currentDraw);
+                mpath = null;
+
+                invalidate();
+                break;
         }
-        x = event.getX();   //记录坐标
-        y = event.getY();
         return true;
     }
 
@@ -137,11 +169,38 @@ public class PaintView extends View {
         return bitmap;
     }
 
-
-
-    @Override
-    public void onDraw(Canvas c) {
-        c.drawBitmap(bitmap, 0, 0, null);
-        //if (mpath != null) c.drawPath(mpath,mpaint);
+    public void clearbitmap(){
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+        invalidate();
+        undopaths.clear();
+        redopaths.clear();
     }
+
+    public void undo(){
+        if(undopaths != null && undopaths.size() > 0){
+            clearbitmap();
+
+            Draw drawPath = undopaths.get(undopaths.size() - 1);
+            redopaths.add(drawPath);
+            undopaths.remove(undopaths.size() - 1);
+
+            Iterator<Draw> iterator = undopaths.iterator();
+            while (iterator.hasNext()) {
+                Draw draw = iterator.next();
+                canvas.drawPath(draw.path, draw.paint);
+            }
+            invalidate();
+        }
+    }
+
+    public void redo(){
+        if(redopaths.size() > 0){
+            Draw draw = redopaths.get(redopaths.size() - 1);
+            undopaths.add(draw);
+            canvas.drawPath(draw.path, draw.paint);
+            redopaths.remove(redopaths.size() - 1);
+            invalidate();
+        }
+    }
+
 }
