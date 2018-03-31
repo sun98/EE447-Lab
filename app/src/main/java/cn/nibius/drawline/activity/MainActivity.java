@@ -4,10 +4,15 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -17,6 +22,7 @@ import com.zyyoona7.lib.EasyPopup;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.nibius.drawline.R;
+import cn.nibius.drawline.util.BgColorClickListener;
 import cn.nibius.drawline.util.ColorClickListener;
 import cn.nibius.drawline.util.PaintView;
 import cn.nibius.drawline.util.WidthClickListener;
@@ -28,16 +34,29 @@ public class MainActivity extends AppCompatActivity {
     ImageButton btnLine;
     @BindView(R.id.btn_shape)
     ImageButton btnShape;
+    @BindView(R.id.btn_bg_color)
+    Button btnBgColor;
+    @BindView(R.id.btn_clear)
+    ImageButton btnClear;
+    @BindView(R.id.btn_eraser)
+    ImageButton btnEraser;
+    @BindView(R.id.btn_undo)
+    ImageButton btnUndo;
+    @BindView(R.id.btn_redo)
+    ImageButton btnRedo;
 
     private String TAG = "draw";
     private Context context;
     private LayoutInflater inflater;
-    private EasyPopup popColor, popLineWidth;
+    private EasyPopup popColor, popLineWidth, popBgColor;
     public static PaintView paintView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         context = getApplicationContext();
@@ -47,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("RestrictedApi")
     private void initView() {
-        LinearLayout paintLayout = findViewById(R.id.paint_layout);
+        final LinearLayout paintLayout = findViewById(R.id.paint_layout);
         paintView = (PaintView) inflater.inflate(R.layout.paint_view, null);
         paintLayout.addView(paintView);
 
@@ -90,6 +109,25 @@ public class MainActivity extends AppCompatActivity {
 //                anim.start();
             }
         });
+
+        popBgColor = new EasyPopup(this)
+                .setContentView(R.layout.pop_color)
+                .setFocusAndOutsideEnable(true)
+                .createPopup();
+        for (int i = 0; i < 5; i++) {
+            popBgColor.getView(buttons[i])
+                    .setOnClickListener(new BgColorClickListener(definedColors[i], popBgColor, btnBgColor));
+        }
+
+        GradientDrawable drawable1 = (GradientDrawable) btnBgColor.getBackground();
+        drawable1.setColor(Color.WHITE);
+        btnBgColor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popBgColor.showAsDropDown(view);
+            }
+        });
+
         btnLine.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -116,5 +154,32 @@ public class MainActivity extends AppCompatActivity {
             };
         }
         btnShape.setOnClickListener(shapeListeners[0]);
+
+        btnEraser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                paintView.setEraserOn();
+                // TODO change background
+            }
+        });
+        btnClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                paintView.clearBitmap();
+            }
+        });
+        btnUndo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                paintView.undo();
+            }
+        });
+        btnRedo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                paintView.redo();
+            }
+        });
     }
+
 }

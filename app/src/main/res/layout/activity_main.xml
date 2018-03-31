@@ -1,21 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="cn.nibius.drawline.activity.MainActivity">
 
-
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:background="@color/background"
+        android:gravity="center_vertical">
 
         <Button
             android:id="@+id/btn_color"
@@ -33,7 +29,8 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:background="@drawable/ic_format_line_weight_black_36dp"/>
+            android:layout_toEndOf="@id/btn_color"
+            android:background="@drawable/format_line_weight" />
 
         <ImageButton
             android:id="@+id/btn_shape"
@@ -42,18 +39,66 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:background="@drawable/ic_brush_black_36dp" />
-    </LinearLayout>
+            android:layout_toEndOf="@id/btn_line"
+            android:background="@drawable/brush" />
+
+        <Button
+            android:id="@+id/btn_bg_color"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_toEndOf="@id/btn_shape"
+            android:background="@drawable/shape_color" />
+
+        <ImageButton
+            android:id="@+id/btn_eraser"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_toEndOf="@id/btn_bg_color"
+            android:background="@drawable/eraser" />
+
+        <ImageButton
+            android:id="@+id/btn_clear"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_toEndOf="@id/btn_eraser"
+            android:background="@drawable/delete_circle" />
+
+        <ImageButton
+            android:id="@+id/btn_redo"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/redo" />
+
+        <ImageButton
+            android:id="@+id/btn_undo"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_toStartOf="@id/btn_redo"
+            android:background="@drawable/undo" />
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/paint_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="38dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linear_layout" />
+        android:layout_below="@id/linear_layout"
+        android:orientation="horizontal" />
 
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>
