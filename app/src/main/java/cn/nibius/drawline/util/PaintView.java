@@ -163,15 +163,15 @@ public class PaintView extends View {
                 invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (modelToPaintSpecialShape) {
-                    drawMove(x, y);
-                    invalidate();
-                    break;
-                }
                 if (isEraser) {
                     eraserPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
                     mX = x;
                     mY = y;
+                    invalidate();
+                    break;
+                }
+                if (modelToPaintSpecialShape) {
+                    drawMove(x, y);
                     invalidate();
                     break;
                 }
@@ -182,16 +182,16 @@ public class PaintView extends View {
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
-                if (modelToPaintSpecialShape) {
-                    drawUp(x, y);
-                    invalidate();
-                    break;
-                }
                 if (isEraser) {
                     eraserPath.lineTo(mX, mY);
                     canvas.drawPath(eraserPath, eraserPaint);
                     undoPaths.add(currentDraw);
                     eraserPath = null;
+                    invalidate();
+                    break;
+                }
+                if (modelToPaintSpecialShape) {
+                    drawUp(x, y);
                     invalidate();
                     break;
                 }
@@ -243,14 +243,14 @@ public class PaintView extends View {
     }
 
     public void clearBitmap() {
-        setBitmapBackgroundColor(Color.WHITE);
+        setBitmapBackgroundColor(backgroundColor);
         undoPaths.clear();
         redoPaths.clear();
     }
 
     public void undo() {
         if (undoPaths != null && undoPaths.size() > 0) {
-            setBitmapBackgroundColor(Color.WHITE);
+            setBitmapBackgroundColor(backgroundColor);
 
             Draw drawPath = undoPaths.get(undoPaths.size() - 1);
             redoPaths.add(drawPath);
