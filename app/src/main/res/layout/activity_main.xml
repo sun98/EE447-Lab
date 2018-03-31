@@ -25,14 +25,15 @@
             android:layout_marginTop="8dp"
             android:background="@drawable/shape_color" />
 
-        <Button
+        <ImageButton
             android:id="@+id/btn_line"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:background="@drawable/ic_format_line_weight_black_36dp" />
+            android:src="@drawable/ic_format_line_weight_black_36dp"
+            android:background="@drawable/shape_color" />
 
         <Button
             android:id="@+id/btn_yellow"

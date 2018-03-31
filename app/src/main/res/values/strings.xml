@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">DrawLine</string>
+    <string name="width_1px">1px</string>
+    <string name="width_3px">3px</string>
+    <string name="width_5px">5px</string>
+    <string name="width_10px">10px</string>
+    <string name="width_20px">20px</string>
+    <string name="width_custom">\?px</string>
+
 </resources>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="200dp"
+    android:layout_height="wrap_content"
+    android:background="@color/trans_white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/width_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingEnd="4dp"
+            android:text="@string/width_1px"
+            android:textAlignment="textEnd" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_weight="4"
+            android:scaleType="center"
+            android:src="@drawable/line_width_1px" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/width_3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingEnd="4dp"
+            android:text="@string/width_3px"
+            android:textAlignment="textEnd" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_weight="4"
+            android:scaleType="center"
+            android:src="@drawable/line_width_3px" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/width_5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingEnd="4dp"
+            android:text="@string/width_5px"
+            android:textAlignment="textEnd" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_weight="4"
+            android:scaleType="center"
+            android:src="@drawable/line_width_5px" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/width_10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingEnd="4dp"
+            android:text="@string/width_10px"
+            android:textAlignment="textEnd" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_weight="4"
+            android:scaleType="center"
+            android:src="@drawable/line_width_10px" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/width_20"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingEnd="4dp"
+            android:text="@string/width_20px"
+            android:textAlignment="textEnd" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_weight="4"
+            android:scaleType="center"
+            android:src="@drawable/line_width_20px" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/width_custom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingEnd="4dp"
+            android:text="@string/width_custom"
+            android:textAlignment="textEnd" />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="15dp"
+            android:layout_gravity="center"
+            android:layout_weight="4"
+            android:scaleType="center"
+            android:src="@drawable/line_width_20px" />
+
+    </LinearLayout>
+
+</LinearLayout>

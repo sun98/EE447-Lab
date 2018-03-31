@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.zyyoona7.lib.EasyPopup;
@@ -21,19 +23,20 @@ import butterknife.ButterKnife;
 import cn.nibius.drawline.R;
 import cn.nibius.drawline.util.ColorClickListener;
 import cn.nibius.drawline.util.PaintView;
+import cn.nibius.drawline.util.WidthClickListener;
 
 public class MainActivity extends AppCompatActivity {
     @BindView(R.id.btn_color)
     Button btnColor;
     @BindView(R.id.btn_line)
-    Button btnLine;
+    ImageButton btnLine;
     @BindView(R.id.btn_yellow)
     Button btnYellow;
 
     private String TAG = "draw";
     private Context context;
     private LayoutInflater inflater;
-    private EasyPopup popColor;
+    private EasyPopup popColor, popLineWidth;
     public static PaintView paintView;
 
     @Override
@@ -56,14 +59,24 @@ public class MainActivity extends AppCompatActivity {
                 .setContentView(R.layout.pop_color)
                 .setFocusAndOutsideEnable(true)
                 .createPopup();
-        Button[] btnColors = new Button[5];
         int[] buttons = {R.id.btn_color_b, R.id.btn_color_r, R.id.btn_color_y, R.id.btn_color_bu, R.id.btn_color_g};
         int[] definedColors = {Color.BLACK, Color.RED, Color.YELLOW, Color.BLUE, Color.GREEN};
         for (int i = 0; i < 5; i++) {
-            btnColors[i] = popColor.getView(buttons[i]);
-            btnColors[i].setOnClickListener(new ColorClickListener(definedColors[i], popColor, btnColor));
+            popColor.getView(buttons[i]).setOnClickListener(new ColorClickListener(definedColors[i], popColor, btnColor));
+        }
+        popLineWidth = new EasyPopup(this)
+                .setContentView(R.layout.pop_line_width)
+                .setFocusAndOutsideEnable(true)
+                .createPopup();
+        int[] widths = {1, 3, 5, 10, 20};
+        int layouts[] = {R.id.width_1, R.id.width_3, R.id.width_5, R.id.width_10, R.id.width_20};
+        for (int i = 0; i < 5; i++) {
+            popLineWidth.getView(layouts[i])
+                    .setOnClickListener(new WidthClickListener(widths[i], popLineWidth));
         }
 
+        GradientDrawable drawable = (GradientDrawable) btnColor.getBackground();
+        drawable.setColor(Color.BLACK);
         btnColor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,6 +90,12 @@ public class MainActivity extends AppCompatActivity {
 //                Animator anim = ViewAnimationUtils.createCircularReveal(gridColorLayout, cx, cy, 0, finalRadius);
 //                gridColorLayout.setVisibility(View.VISIBLE);
 //                anim.start();
+            }
+        });
+        btnLine.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popLineWidth.showAsDropDown(view);
             }
         });
     }

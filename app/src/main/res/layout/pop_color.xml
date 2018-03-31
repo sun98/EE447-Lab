@@ -3,53 +3,62 @@
     android:id="@+id/grid_color_layout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:background="@color/trans_white"
     android:columnCount="3"
     android:rowCount="2">
 
     <Button
         android:id="@+id/btn_color_b"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:background="@drawable/shape_color"
-        android:layout_margin="2dp" />
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/black" />
 
     <Button
         android:id="@+id/btn_color_r"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:background="@drawable/shape_color"
-        android:backgroundTint="@color/red"
-        android:layout_margin="2dp" />
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/red" />
 
     <Button
         android:id="@+id/btn_color_y"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:background="@drawable/shape_color"
-        android:backgroundTint="@color/yellow"
-        android:layout_margin="2dp" />
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/yellow" />
 
     <Button
         android:id="@+id/btn_color_bu"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:background="@drawable/shape_color"
-        android:backgroundTint="@color/blue"
-        android:layout_margin="2dp" />
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/blue" />
 
     <Button
         android:id="@+id/btn_color_g"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:background="@drawable/shape_color"
-        android:backgroundTint="@color/green"
-        android:layout_margin="2dp" />
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/green" />
 
     <Button
         android:id="@+id/btn_color_c"
+        style="?android:attr/buttonBarButtonStyle"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:background="@drawable/shape_color"
-        android:layout_margin="2dp" />
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/palette" />
 
 </GridLayout>
