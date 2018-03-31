@@ -12,14 +12,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:gravity="center_vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <Button
             android:id="@+id/btn_color"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
@@ -32,8 +33,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:src="@drawable/ic_format_line_weight_black_36dp"
-            android:background="@drawable/shape_color" />
+            android:background="@drawable/ic_format_line_weight_black_36dp"/>
 
         <ImageButton
             android:id="@+id/btn_shape"
@@ -42,8 +42,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:src="@drawable/ic_brush_black_36dp"
-            android:background="@drawable/shape_color" />
+            android:background="@drawable/ic_brush_black_36dp" />
     </LinearLayout>
 
     <LinearLayout
