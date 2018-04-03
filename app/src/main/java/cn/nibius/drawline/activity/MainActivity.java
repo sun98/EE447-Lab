@@ -4,16 +4,15 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
@@ -25,7 +24,9 @@ import cn.nibius.drawline.R;
 import cn.nibius.drawline.util.BgColorClickListener;
 import cn.nibius.drawline.util.ColorClickListener;
 import cn.nibius.drawline.util.PaintView;
+import cn.nibius.drawline.util.ToastUtil;
 import cn.nibius.drawline.util.WidthClickListener;
+import me.shaohui.bottomdialog.BottomDialog;
 
 public class MainActivity extends AppCompatActivity {
     @BindView(R.id.btn_color)
@@ -81,6 +82,38 @@ public class MainActivity extends AppCompatActivity {
             popColor.getView(buttons[i])
                     .setOnClickListener(new ColorClickListener(definedColors[i], popColor, btnColor));
         }
+        popColor.getView(R.id.btn_color_c).setOnClickListener(view -> {
+            BottomDialog colorDialog = BottomDialog.create(getSupportFragmentManager())
+                    .setLayoutRes(R.layout.dialog_color)
+                    .setCancelOutside(true);
+            colorDialog.setViewListener(v -> {
+                EditText colorText = v.findViewById(R.id.edit_color);
+                v.findViewById(R.id.btn_color_cancel).setOnClickListener((View v1) -> {
+                    colorDialog.dismiss();
+                    hideKeyBoard(colorText);
+                    popColor.dismiss();
+                });
+                v.findViewById(R.id.btn_color_confirm).setOnClickListener((View v1) -> {
+                    String colorStr = colorText.getText().toString();
+                    try {
+                        int colorInt = Color.parseColor(colorStr);
+                        GradientDrawable drawable = (GradientDrawable) btnColor.getBackground();
+                        drawable.setColor(colorInt);
+                        paintView.setPaintColor(colorInt);
+                        colorDialog.dismiss();
+                        hideKeyBoard(colorText);
+                        popColor.dismiss();
+                    } catch (IllegalArgumentException e) {
+                        ToastUtil.showShort(context, R.string.unknown_color);
+                    }catch (Exception e){
+                        ToastUtil.showShort(context, R.string.unknown_error);
+                    }
+                });
+                showKeyBoard(colorText);
+            });
+            colorDialog.show();
+        });
+
         popLineWidth = new EasyPopup(this)
                 .setContentView(R.layout.pop_line_width)
                 .setFocusAndOutsideEnable(true)
@@ -91,13 +124,37 @@ public class MainActivity extends AppCompatActivity {
             popLineWidth.getView(layouts[i])
                     .setOnClickListener(new WidthClickListener(widths[i], popLineWidth));
         }
+        popLineWidth.getView(R.id.width_custom).setOnClickListener(view -> {
+            BottomDialog lineDialog = BottomDialog.create(getSupportFragmentManager())
+                    .setLayoutRes(R.layout.dialog_line)
+                    .setCancelOutside(true);
+            lineDialog.setViewListener(v -> {
+                EditText lineText = v.findViewById(R.id.edit_line);
+                v.findViewById(R.id.btn_color_cancel).setOnClickListener((View v1) -> {
+                    lineDialog.dismiss();
+                    hideKeyBoard(lineText);
+                    popLineWidth.dismiss();
+                });
+                v.findViewById(R.id.btn_color_confirm).setOnClickListener((View v1) -> {
+                    try{
+                    String lineStr = lineText.getText().toString();
+                    float lineInt = Float.parseFloat(lineStr);
+                    paintView.setPaintStrokeWidth(lineInt);
+                    hideKeyBoard(lineText);
+                    lineDialog.dismiss();
+                    popLineWidth.dismiss();} catch (Exception e){
+                        ToastUtil.showShort(context,R.string.unknown_error);
+                    }
+                });
+                showKeyBoard(lineText);
+            });
+            lineDialog.show();
+        });
 
         GradientDrawable drawable = (GradientDrawable) btnColor.getBackground();
         drawable.setColor(Color.BLACK);
-        btnColor.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                popColor.showAsDropDown(view);
+        btnColor.setOnClickListener(view -> {
+            popColor.showAsDropDown(view);
 //                动画，暂时会报错，先搁着
 //                GridLayout gridColorLayout = findViewById(R.id.grid_color_layout);
 //                gridColorLayout.setVisibility(View.INVISIBLE);
@@ -107,7 +164,6 @@ public class MainActivity extends AppCompatActivity {
 //                Animator anim = ViewAnimationUtils.createCircularReveal(gridColorLayout, cx, cy, 0, finalRadius);
 //                gridColorLayout.setVisibility(View.VISIBLE);
 //                anim.start();
-            }
         });
 
         popBgColor = new EasyPopup(this)
@@ -118,22 +174,44 @@ public class MainActivity extends AppCompatActivity {
             popBgColor.getView(buttons[i])
                     .setOnClickListener(new BgColorClickListener(definedColors[i], popBgColor, btnBgColor));
         }
+        popBgColor.getView(R.id.btn_color_c).setOnClickListener(view -> {
+            BottomDialog bgColorDialog = BottomDialog.create(getSupportFragmentManager())
+                    .setLayoutRes(R.layout.dialog_color)
+                    .setCancelOutside(true);
+            bgColorDialog.setViewListener(v -> {
+                EditText colorText = v.findViewById(R.id.edit_color);
+                v.findViewById(R.id.btn_color_cancel).setOnClickListener((View v1) -> {
+                    hideKeyBoard(colorText);
+                    bgColorDialog.dismiss();
+                    popBgColor.dismiss();
+                });
+                v.findViewById(R.id.btn_color_confirm).setOnClickListener((View v1) -> {
+                    String colorStr = colorText.getText().toString();
+                    try {
+                        int colorInt = Color.parseColor(colorStr);
+                        Log.i(TAG, "initView: " + colorInt);
+                        GradientDrawable drawable1 = (GradientDrawable) btnBgColor.getBackground();
+                        drawable1.setColor(colorInt);
+                        paintView.setBitmapBackgroundColor(colorInt);
+                        bgColorDialog.dismiss();
+                        hideKeyBoard(colorText);
+                        popBgColor.dismiss();
+                    } catch (IllegalArgumentException e) {
+                        ToastUtil.showShort(context, getString(R.string.unknown_color));
+                    }catch (Exception e){
+                        ToastUtil.showShort(context, R.string.unknown_error);
+                    }
+                });
+                showKeyBoard(colorText);
+            });
+            bgColorDialog.show();
+        });
 
         GradientDrawable drawable1 = (GradientDrawable) btnBgColor.getBackground();
         drawable1.setColor(Color.WHITE);
-        btnBgColor.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                popBgColor.showAsDropDown(view);
-            }
-        });
+        btnBgColor.setOnClickListener(view -> popBgColor.showAsDropDown(view));
 
-        btnLine.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                popLineWidth.showAsDropDown(view);
-            }
-        });
+        btnLine.setOnClickListener(view -> popLineWidth.showAsDropDown(view));
 
         final View.OnClickListener[] shapeListeners = new View.OnClickListener[4];
         final int[] shapeRes = {
@@ -144,42 +222,31 @@ public class MainActivity extends AppCompatActivity {
         };
         for (int i = 0; i < 4; i++) {
             final int finalI = i;
-            shapeListeners[i] = new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    view.setOnClickListener(shapeListeners[(finalI + 1) % 4]);
-                    view.setBackgroundResource(shapeRes[(finalI + 1) % 4]);
-                    paintView.setPaintMode((finalI + 1) % 4);
-                }
+            shapeListeners[i] = view -> {
+                view.setOnClickListener(shapeListeners[(finalI + 1) % 4]);
+                view.setBackgroundResource(shapeRes[(finalI + 1) % 4]);
+                paintView.setPaintMode((finalI + 1) % 4);
             };
         }
         btnShape.setOnClickListener(shapeListeners[0]);
 
-        btnEraser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                paintView.setEraserOn();
-                // TODO change background
-            }
+        btnEraser.setOnClickListener(view -> {
+            paintView.setEraserOn();
+            // TODO change background
         });
-        btnClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                paintView.clearBitmap();
-            }
-        });
-        btnUndo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                paintView.undo();
-            }
-        });
-        btnRedo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                paintView.redo();
-            }
-        });
+        btnClear.setOnClickListener(view -> paintView.clearBitmap());
+        btnUndo.setOnClickListener(view -> paintView.undo());
+        btnRedo.setOnClickListener(view -> paintView.redo());
     }
 
+    private void showKeyBoard(EditText et) {
+        // TODO: 弹出输入框不起作用
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(et, 0);
+    }
+
+    private void hideKeyBoard(EditText et) {
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(et.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+    }
 }

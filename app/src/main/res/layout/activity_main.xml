@@ -19,7 +19,17 @@
             android:layout_height="26dp"
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="11dp"
+            android:background="@drawable/shape_color" />
+
+        <Button
+            android:id="@+id/btn_bg_color"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="11dp"
+            android:layout_toEndOf="@id/btn_color"
             android:background="@drawable/shape_color" />
 
         <ImageButton
@@ -29,7 +39,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_toEndOf="@id/btn_color"
+            android:layout_toEndOf="@id/btn_bg_color"
             android:background="@drawable/format_line_weight" />
 
         <ImageButton
@@ -42,15 +52,6 @@
             android:layout_toEndOf="@id/btn_line"
             android:background="@drawable/brush" />
 
-        <Button
-            android:id="@+id/btn_bg_color"
-            android:layout_width="26dp"
-            android:layout_height="26dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_toEndOf="@id/btn_shape"
-            android:background="@drawable/shape_color" />
 
         <ImageButton
             android:id="@+id/btn_eraser"
@@ -59,7 +60,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_toEndOf="@id/btn_bg_color"
+            android:layout_toEndOf="@id/btn_shape"
             android:background="@drawable/eraser" />
 
         <ImageButton

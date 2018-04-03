@@ -6,5 +6,13 @@
     <string name="width_10px">10px</string>
     <string name="width_20px">20px</string>
     <string name="width_custom">\?px</string>
+    <string name="not_finished_yet">这里还没完成哦</string>
+    <string name="cancel">取消</string>
+    <string name="confirm">确定</string>
+    <string name="select_color_hint">输入颜色代码，如#ffffffff</string>
+    <string name="select_line_hint">输入线条像素粗细，如30</string>
+    <string name="unknown_color">未知颜色！</string>
+    <string name="apply">应用</string>
+    <string name="unknown_error">未知错误</string>
 
 </resources>
