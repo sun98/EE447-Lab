@@ -20,7 +20,7 @@ public class PaintView extends View {
     private Path mpath;
     private Paint mBitmapPaint;
     private Bitmap bitmap;
-    private Paint mpaint;
+    private Paint mpaint,savePaint;
 
     class Draw {
         Path path;
@@ -126,7 +126,9 @@ public class PaintView extends View {
 
     private void drawUp(float x, float y) {
         drawMove(x, y);
-        canvas.drawPath(mpath, mpaint);
+
+        Paint tmp = new Paint(mpaint);
+        canvas.drawPath(mpath, tmp);
         undoPaths.add(currentDraw);
         mpath = null;
 //        modelToPaintSpecialShape = false;
@@ -151,9 +153,10 @@ public class PaintView extends View {
                     break;
                 }
                 mpath = new Path();
+                savePaint = new Paint(mpaint);
                 currentDraw = new Draw();
                 currentDraw.path = mpath;
-                currentDraw.paint = mpaint;
+                currentDraw.paint = savePaint;
 
                 mpath.reset();
                 mpath.moveTo(x, y);
@@ -226,8 +229,7 @@ public class PaintView extends View {
         mpaint.setAntiAlias(flag);
     }
 
-    //设置画板背景颜色
-    public void setBitmapBackgroundColor(int color) {
+    public void setBackgroundColor(int color){
         backgroundColor = color;
         eraserPaint.setColor(backgroundColor);
 
@@ -235,6 +237,12 @@ public class PaintView extends View {
         paint.setColor(color);
         canvas.drawRect(0, 0, bitmap.getWidth(), bitmap.getHeight(), paint);
         invalidate();
+    }
+    //设置画板背景颜色
+    public void setBitmapBackgroundColor(int color) {
+        setBackgroundColor(color);
+        undoPaths.clear();
+        redoPaths.clear();
     }
 
     //保存bitmap图片
@@ -244,13 +252,11 @@ public class PaintView extends View {
 
     public void clearBitmap() {
         setBitmapBackgroundColor(backgroundColor);
-        undoPaths.clear();
-        redoPaths.clear();
     }
 
     public void undo() {
         if (undoPaths != null && undoPaths.size() > 0) {
-            setBitmapBackgroundColor(backgroundColor);
+            setBackgroundColor(backgroundColor);
 
             Draw drawPath = undoPaths.get(undoPaths.size() - 1);
             redoPaths.add(drawPath);
