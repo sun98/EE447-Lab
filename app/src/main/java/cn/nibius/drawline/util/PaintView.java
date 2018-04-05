@@ -294,5 +294,5 @@ public class PaintView extends View {
         else isEraser = true;
     }
 
-
+    
 }
