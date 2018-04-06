@@ -6,8 +6,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -16,11 +20,12 @@ import java.util.Iterator;
 
 public class PaintView extends View {
 
+    private static String TAG = "PaintView";
     private Canvas canvas;
-    private Path mpath;
+    private Path mPath;
     private Paint mBitmapPaint;
     private Bitmap bitmap;
-    private Paint mpaint,savePaint;
+    private Paint mPaint, savePaint;
 
     class Draw {
         Path path;
@@ -44,15 +49,15 @@ public class PaintView extends View {
     public void initCanvas() {
         undoPaths = new ArrayList<>();
         redoPaths = new ArrayList<>();
-        mpaint = new Paint();
-        mpaint.setAntiAlias(true);
-        mpaint.setDither(true);
-        mpaint.setColor(Color.BLACK);
-        mpaint.setStyle(Paint.Style.STROKE);
-        mpaint.setStrokeJoin(Paint.Join.ROUND);
-        mpaint.setStrokeCap(Paint.Cap.ROUND);
-        mpaint.setStrokeWidth(10);
-        mpath = new Path();
+        mPaint = new Paint();
+        mPaint.setAntiAlias(true);
+        mPaint.setDither(true);
+        mPaint.setColor(Color.BLACK);
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setStrokeJoin(Paint.Join.ROUND);
+        mPaint.setStrokeCap(Paint.Cap.ROUND);
+        mPaint.setStrokeWidth(10);
+        mPath = new Path();
 
         mBitmapPaint = new Paint(Paint.DITHER_FLAG);
 
@@ -95,8 +100,8 @@ public class PaintView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         canvas.drawBitmap(bitmap, 0, 0, mBitmapPaint);
-        if (mpath != null) {
-            canvas.drawPath(mpath, mpaint);
+        if (mPath != null) {
+            canvas.drawPath(mPath, mPaint);
         }
         if (eraserPath != null) {
             canvas.drawPath(eraserPath, eraserPaint);
@@ -104,20 +109,20 @@ public class PaintView extends View {
     }
 
     private void drawMove(float x, float y) {
-        mpath.reset();
+        mPath.reset();
         switch (model) {
             case 1:
                 float radius = (float) Math.sqrt((x - mX) * (x - mX) + (y - mY) * (y - mY));
-                mpath.addCircle(mX, mY, radius, Path.Direction.CW);
+                mPath.addCircle(mX, mY, radius, Path.Direction.CW);
                 break;
             case 2:
-                mpath.addOval(mX,mY,x,y, Path.Direction.CW);
+                mPath.addOval(mX, mY, x, y, Path.Direction.CW);
                 break;
             case 3:
-                if (x>=mX && y>=mY) mpath.addRect(mX,mY,x,y, Path.Direction.CW);
-                else if (x>=mX && y<mY) mpath.addRect(mX,y,x,mY, Path.Direction.CW);
-                else if (x<mX && y>=mY) mpath.addRect(x,mY,mX,y, Path.Direction.CW);
-                else mpath.addRect(x,y,mX,mY, Path.Direction.CW);
+                if (x >= mX && y >= mY) mPath.addRect(mX, mY, x, y, Path.Direction.CW);
+                else if (x >= mX && y < mY) mPath.addRect(mX, y, x, mY, Path.Direction.CW);
+                else if (x < mX && y >= mY) mPath.addRect(x, mY, mX, y, Path.Direction.CW);
+                else mPath.addRect(x, y, mX, mY, Path.Direction.CW);
                 break;
             default:
                 break;
@@ -127,10 +132,10 @@ public class PaintView extends View {
     private void drawUp(float x, float y) {
         drawMove(x, y);
 
-        Paint tmp = new Paint(mpaint);
-        canvas.drawPath(mpath, tmp);
+        Paint tmp = new Paint(mPaint);
+        canvas.drawPath(mPath, tmp);
         undoPaths.add(currentDraw);
-        mpath = null;
+        mPath = null;
 //        modelToPaintSpecialShape = false;
     }
 
@@ -152,14 +157,14 @@ public class PaintView extends View {
                     invalidate();
                     break;
                 }
-                mpath = new Path();
-                savePaint = new Paint(mpaint);
+                mPath = new Path();
+                savePaint = new Paint(mPaint);
                 currentDraw = new Draw();
-                currentDraw.path = mpath;
+                currentDraw.path = mPath;
                 currentDraw.paint = savePaint;
 
-                mpath.reset();
-                mpath.moveTo(x, y);
+                mPath.reset();
+                mPath.moveTo(x, y);
                 mX = x;
                 mY = y;
 
@@ -178,7 +183,7 @@ public class PaintView extends View {
                     invalidate();
                     break;
                 }
-                mpath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
+                mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
                 mX = x;
                 mY = y;
 
@@ -198,10 +203,10 @@ public class PaintView extends View {
                     invalidate();
                     break;
                 }
-                mpath.lineTo(mX, mY);
-                canvas.drawPath(mpath, mpaint);
+                mPath.lineTo(mX, mY);
+                canvas.drawPath(mPath, mPaint);
                 undoPaths.add(currentDraw);
-                mpath = null;
+                mPath = null;
 
                 invalidate();
                 break;
@@ -211,25 +216,25 @@ public class PaintView extends View {
 
     //设置画笔颜色
     public void setPaintColor(int Color) {
-        mpaint.setColor(Color);
+        mPaint.setColor(Color);
     }
 
     //设置画笔线的类型
     public void setPaintStrokeCap(Paint.Cap a) {
-        mpaint.setStrokeCap(a);
+        mPaint.setStrokeCap(a);
     }
 
     //设置线的宽度
     public void setPaintStrokeWidth(float width) {
-        mpaint.setStrokeWidth(width);
+        mPaint.setStrokeWidth(width);
     }
 
     //设置抗锯齿
     public void setPaintAntiAlias(boolean flag) {
-        mpaint.setAntiAlias(flag);
+        mPaint.setAntiAlias(flag);
     }
 
-    public void setBackgroundColor(int color){
+    public void setBackgroundColor(int color) {
         backgroundColor = color;
         eraserPaint.setColor(backgroundColor);
 
@@ -238,6 +243,7 @@ public class PaintView extends View {
         canvas.drawRect(0, 0, bitmap.getWidth(), bitmap.getHeight(), paint);
         invalidate();
     }
+
     //设置画板背景颜色
     public void setBitmapBackgroundColor(int color) {
         setBackgroundColor(color);
@@ -294,5 +300,63 @@ public class PaintView extends View {
         else isEraser = true;
     }
 
-    
+    @Override
+    protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
+        super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
+        Log.i(TAG, "onFocusChanged: " + gainFocus);
+    }
+
+    @Override
+    public void onStartTemporaryDetach() {
+        super.onStartTemporaryDetach();
+        Log.i(TAG, "onStartTemporaryDetach: ");
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasWindowFocus) {
+        super.onWindowFocusChanged(hasWindowFocus);
+        Log.i(TAG, "onWindowFocusChanged: " + hasWindowFocus);
+    }
+
+    @Override
+    protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
+        super.onVisibilityChanged(changedView, visibility);
+        Log.i(TAG, "onVisibilityChanged: " + visibility);
+    }
+
+    @Override
+    protected void onWindowVisibilityChanged(int visibility) {
+        super.onWindowVisibilityChanged(visibility);
+        Log.i(TAG, "onWindowVisibilityChanged: " + visibility);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        Log.i(TAG, "onAttachedToWindow: ");
+    }
+
+    @Override
+    public void onScreenStateChanged(int screenState) {
+        super.onScreenStateChanged(screenState);
+        Log.i(TAG, "onScreenStateChanged: " + screenState);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        Log.i(TAG, "onDetachedFromWindow: ");
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        super.onRestoreInstanceState(state);
+        Log.i(TAG, "onRestoreInstanceState: ");
+    }
+
+    @Override
+    public void onWindowSystemUiVisibilityChanged(int visible) {
+        super.onWindowSystemUiVisibilityChanged(visible);
+        Log.i(TAG, "onWindowSystemUiVisibilityChanged: " + visible);
+    }
 }

@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.btn_redo)
     ImageButton btnRedo;
 
-    private String TAG = "draw";
+    private String TAG = "MainActivity";
     private Context context;
     private LayoutInflater inflater;
     private EasyPopup popColor, popLineWidth, popBgColor;
@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
                 showKeyBoard(colorText);
             });
             colorDialog.show();
+            ToastUtil.showLong(context, getString(R.string.bug_notation));
         });
 
         popLineWidth = new EasyPopup(this)
@@ -149,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
                 showKeyBoard(lineText);
             });
             lineDialog.show();
+            ToastUtil.showLong(context, getString(R.string.bug_notation));
         });
 
         GradientDrawable drawable = (GradientDrawable) btnColor.getBackground();
@@ -205,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
                 showKeyBoard(colorText);
             });
             bgColorDialog.show();
+            ToastUtil.showLong(context, getString(R.string.bug_notation));
         });
 
         GradientDrawable drawable1 = (GradientDrawable) btnBgColor.getBackground();

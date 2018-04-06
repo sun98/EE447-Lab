@@ -14,5 +14,6 @@
     <string name="unknown_color">未知颜色！</string>
     <string name="apply">应用</string>
     <string name="unknown_error">未知错误</string>
+    <string name="bug_notation">目前有个小bug，自定义颜色、背景色、线条粗细后，画布会被清空。</string>
 
 </resources>
