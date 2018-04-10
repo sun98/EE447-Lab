@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                         popColor.dismiss();
                     } catch (IllegalArgumentException e) {
                         ToastUtil.showShort(context, R.string.unknown_color);
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         ToastUtil.showShort(context, R.string.unknown_error);
                     }
                 });
@@ -137,14 +137,15 @@ public class MainActivity extends AppCompatActivity {
                     popLineWidth.dismiss();
                 });
                 v.findViewById(R.id.btn_color_confirm).setOnClickListener((View v1) -> {
-                    try{
-                    String lineStr = lineText.getText().toString();
-                    float lineInt = Float.parseFloat(lineStr);
-                    paintView.setPaintStrokeWidth(lineInt);
-                    hideKeyBoard(lineText);
-                    lineDialog.dismiss();
-                    popLineWidth.dismiss();} catch (Exception e){
-                        ToastUtil.showShort(context,R.string.unknown_error);
+                    try {
+                        String lineStr = lineText.getText().toString();
+                        float lineInt = Float.parseFloat(lineStr);
+                        paintView.setPaintStrokeWidth(lineInt);
+                        hideKeyBoard(lineText);
+                        lineDialog.dismiss();
+                        popLineWidth.dismiss();
+                    } catch (Exception e) {
+                        ToastUtil.showShort(context, R.string.unknown_error);
                     }
                 });
                 showKeyBoard(lineText);
@@ -200,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
                         popBgColor.dismiss();
                     } catch (IllegalArgumentException e) {
                         ToastUtil.showShort(context, getString(R.string.unknown_color));
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         ToastUtil.showShort(context, R.string.unknown_error);
                     }
                 });
