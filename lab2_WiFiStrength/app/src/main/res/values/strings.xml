@@ -6,4 +6,14 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+    <string name="scan">SCAN</string>
+    <string name="wifi_scan_results">WiFi scan results</string>
+    <string name="title_activity_wifi_detail">WifiDetailActivity</string>
+    <string name="ssid">SSID</string>
+    <string name="signal_strength">Signal strength record:</string>
+    <string name="ssid_">SSID:</string>
+    <string name="bssid_">BSSID:</string>
+    <string name="ok">OK</string>
+    <string name="order_0">0:</string>
+    <string name="dbm">dBm</string>
 </resources>

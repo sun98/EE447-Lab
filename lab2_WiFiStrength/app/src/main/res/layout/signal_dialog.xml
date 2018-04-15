@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:gravity="bottom">
+
+    <TextView
+        android:id="@+id/text_ssid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="@string/ssid_"
+        android:textColor="@android:color/black" />
+
+    <TextView
+        android:id="@+id/text_bssid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_ssid"
+        android:padding="10dp"
+        android:text="@string/bssid_"
+        android:textColor="@android:color/black" />
+
+    <TextView
+        android:id="@+id/text_signal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_bssid"
+        android:layout_toEndOf="@+id/progress_bar"
+        android:padding="10dp"
+        android:text="@string/signal_strength"
+        android:textColor="@android:color/black" />
+
+    <Button
+        android:id="@+id/btn_ok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:layout_below="@id/text_signal"
+        android:layout_centerHorizontal="true"
+        android:text="@string/ok" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/text_bssid"
+        android:padding="10dp" />
+
+</RelativeLayout>
