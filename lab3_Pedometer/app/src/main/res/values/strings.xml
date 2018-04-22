@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">lab3_Pedometer</string>
+    <string name="hello">Hello World, PracticeActivity!</string>
+    <string name="onAccuracyChanged">onAccuracyChanged doesn’t detonate</string>
+    <string name="AT">0</string>
+    <string name="Button_Write">Write</string>
+    <string name="Button_Stop">Stop</string>
+
+</resources>
