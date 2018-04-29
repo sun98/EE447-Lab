@@ -3,4 +3,8 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="viewfinder_mask">#766168</color>
+    <color name="result_view">#8b2c4c</color>
+    <color name="viewfinder_laser">#8b2c4c</color>
+    <color name="possible_result_points">#8b2c4c</color>
 </resources>
