@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 recyclerAdapter.updateResults(scanResults);
                 receiveTime = 0 - receiveTime;
                 Log.i(TAG, "onReceive: " + receiveTime);
+                Log.i(TAG, "onReceive: " + getScanString());
             }
         };
         IntentFilter filter = new IntentFilter();
